@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/useCartStore';
+import MisegaLoader from '@/Components/MisegaLoader.vue';
 import { ShoppingBag, Search, Menu, X, LogOut, Package } from 'lucide-vue-next';
 
 const cartStore = useCartStore();
@@ -20,6 +21,8 @@ const handleSearch = () => {
 
 <template>
     <div class="min-h-screen bg-white text-gray-900 flex flex-col font-sans selection:bg-primary selection:text-white">
+        <!-- Fullscreen 3D Manga Loader -->
+        <MisegaLoader />
 
         <!-- Header / Navbar -->
         <header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-all duration-200">

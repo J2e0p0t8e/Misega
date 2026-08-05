@@ -4,6 +4,7 @@ import { Head, router } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import MangaCard from '@/Components/MangaCard.vue';
 import Hero3DCarousel from '@/Components/Hero3DCarousel.vue';
+import MangaSceneBackground from '@/Components/MangaSceneBackground.vue';
 import { Search, Sparkles, X, BookOpen, Layers } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -68,9 +69,12 @@ const resetFilters = () => {
     <MisegaLayout>
         <!-- Hero Section with 3D Parallax & Calligraphy Animation -->
         <div class="relative bg-gradient-to-b from-gray-100 via-white to-gray-50 border-b border-gray-200 py-12 sm:py-16 overflow-hidden">
-            <!-- Background Decorative Glow & Kanji Patterns -->
-            <div class="absolute -top-20 right-1/4 w-96 h-96 bg-primary/10 blur-3xl rounded-full pointer-events-none"></div>
-            <div class="absolute top-1/2 left-5 -translate-y-1/2 text-gray-200/40 font-gang text-9xl select-none pointer-events-none z-0">
+            <!-- 3D Floating Manga Pages Background Scene -->
+            <MangaSceneBackground />
+
+            <!-- Ambient glow accents (above 3D scene) -->
+            <div class="absolute -top-20 right-1/4 w-96 h-96 bg-primary/8 blur-3xl rounded-full pointer-events-none z-0"></div>
+            <div class="absolute top-1/2 left-5 -translate-y-1/2 text-gray-200/30 font-gang text-9xl select-none pointer-events-none z-0">
                 漫画
             </div>
 
@@ -131,7 +135,10 @@ const resetFilters = () => {
         </div>
 
         <!-- Catalog Container -->
-        <div id="catalog-grid" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- Catalog Container with 3D background -->
+        <div class="relative overflow-hidden">
+            <MangaSceneBackground />
+        <div id="catalog-grid" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
             <!-- Filter Bar & Search -->
             <div class="space-y-6 mb-10">
                 <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
@@ -234,6 +241,7 @@ const resetFilters = () => {
                 </button>
             </div>
         </div>
+        </div><!-- end catalog-grid wrapper -->
     </MisegaLayout>
 </template>
 
