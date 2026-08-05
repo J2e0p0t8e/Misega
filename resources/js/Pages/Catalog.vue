@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import MangaCard from '@/Components/MangaCard.vue';
+import Hero3DCarousel from '@/Components/Hero3DCarousel.vue';
 import { Search, Sparkles, X, BookOpen, Layers } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -121,19 +122,9 @@ const resetFilters = () => {
                         </div>
                     </div>
 
-                    <!-- Hero Visual Cards Stack with Hover Elevation -->
-                    <div v-if="featuredMangas.length > 0" class="md:col-span-5 flex items-center justify-center gap-4 py-4">
-                        <div 
-                            v-for="(fManga, idx) in featuredMangas.slice(0, 3)" 
-                            :key="fManga.id"
-                            class="w-32 sm:w-36 aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border-2 border-white relative transform transition duration-500 hover:-translate-y-4 hover:rotate-2 hover:shadow-2xl hover:shadow-primary/30"
-                            :class="idx === 1 ? '-translate-y-4 z-10 shadow-2xl shadow-primary/20 border-primary/50 scale-105' : 'opacity-90'"
-                        >
-                            <img :src="fManga.cover_image" :alt="fManga.title" class="w-full h-full object-cover" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-transparent to-transparent p-2.5 flex items-end">
-                                <span class="font-gang text-xs text-white line-clamp-1">{{ fManga.title }}</span>
-                            </div>
-                        </div>
+                    <!-- Hero 3D Revolving Perspective Carousel -->
+                    <div class="md:col-span-5 flex items-center justify-center">
+                        <Hero3DCarousel :mangas="featuredMangas" />
                     </div>
                 </div>
             </div>
