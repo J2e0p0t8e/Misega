@@ -2,146 +2,259 @@
 import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/useCartStore';
-import { ShoppingCart, Eye, BookOpen } from 'lucide-vue-next';
+import { ShoppingCart, Eye, BookOpen, Star } from 'lucide-vue-next';
 
 const props = defineProps({
-    manga: {
-        type: Object,
-        required: true,
-    }
+    manga: { type: Object, required: true }
 });
 
 const cartStore = useCartStore();
-
 const cardRef = ref(null);
-const tiltStyle = ref({});
 const isHovered = ref(false);
+
+// --- Tracking state ---
+const rotX = ref(0);
+const rotY = ref(0);
+const glowX = ref(50); // cursor % within card
+const glowY = ref(50);
+const imgTransX = ref(0);
+const imgTransY = ref(0);
 
 const handleMouseMove = (e) => {
     if (!cardRef.value) return;
     const rect = cardRef.value.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -12; // tilt angle X
-    const rotateY = ((x - centerX) / centerX) * 12;  // tilt angle Y
 
-    tiltStyle.value = {
-        transform: `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.03, 1.03, 1.03)`,
-        transition: 'transform 0.1s ease-out',
-    };
+    // Normalized -1 → 1
+    const nx = (x / rect.width) * 2 - 1;
+    const ny = (y / rect.height) * 2 - 1;
+
+    // Card tilt: max ±12 deg
+    rotX.value = -ny * 12;
+    rotY.value = nx * 12;
+
+    // Foreground image parallax: image moves MORE than card tilt (deeper effect)
+    imgTransX.value = nx * 18;
+    imgTransY.value = ny * 18;
+
+    // Glow follows cursor (as %)
+    glowX.value = (x / rect.width) * 100;
+    glowY.value = (y / rect.height) * 100;
 };
 
-const handleMouseEnter = () => {
-    isHovered.value = true;
-};
+const handleMouseEnter = () => { isHovered.value = true; };
 
 const handleMouseLeave = () => {
     isHovered.value = false;
-    tiltStyle.value = {
-        transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-        transition: 'transform 0.5s ease-out',
-    };
+    rotX.value = 0;
+    rotY.value = 0;
+    imgTransX.value = 0;
+    imgTransY.value = 0;
 };
 
-const firstVolume = computed(() => {
-    return props.manga.volumes && props.manga.volumes.length > 0 ? props.manga.volumes[0] : null;
-});
+// Computed style for the outer card 3D tilt
+const cardStyle = computed(() => ({
+    transform: isHovered.value
+        ? `perspective(900px) rotateX(${rotX.value.toFixed(2)}deg) rotateY(${rotY.value.toFixed(2)}deg) scale3d(1.04, 1.04, 1.04)`
+        : 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)',
+    transition: isHovered.value
+        ? 'transform 0.12s ease-out'
+        : 'transform 0.5s cubic-bezier(0.25,1,0.5,1)',
+}));
+
+// Parallax: cover image moves faster than card (foreground)
+const imgStyle = computed(() => ({
+    transform: isHovered.value
+        ? `scale(1.15) translateX(${imgTransX.value.toFixed(2)}px) translateY(${imgTransY.value.toFixed(2)}px)`
+        : 'scale(1.0) translateX(0px) translateY(0px)',
+    transition: isHovered.value
+        ? 'transform 0.12s ease-out'
+        : 'transform 0.5s cubic-bezier(0.25,1,0.5,1)',
+}));
+
+// Cursor-following red radial glow
+const glowStyle = computed(() => ({
+    background: `radial-gradient(circle 130px at ${glowX.value}% ${glowY.value}%, rgba(188,0,45,0.18) 0%, transparent 75%)`,
+    opacity: isHovered.value ? 1 : 0,
+    transition: 'opacity 0.3s ease',
+}));
+
+// Badge 3D rotation: they "tilt to face the user" slightly
+const badgeStyle = computed(() => ({
+    transform: isHovered.value
+        ? `perspective(400px) rotateX(${(rotX.value * 0.6).toFixed(2)}deg) rotateY(${(-rotY.value * 0.6).toFixed(2)}deg) translateZ(16px)`
+        : 'perspective(400px) rotateX(0deg) rotateY(0deg) translateZ(0px)',
+    transition: isHovered.value
+        ? 'transform 0.12s ease-out'
+        : 'transform 0.5s cubic-bezier(0.25,1,0.5,1)',
+}));
+
+const firstVolume = computed(() =>
+    props.manga.volumes?.length > 0 ? props.manga.volumes[0] : null
+);
 
 const handleQuickAdd = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (firstVolume.value) {
-        cartStore.addItem(props.manga, firstVolume.value, 1);
-    }
+    if (firstVolume.value) cartStore.addItem(props.manga, firstVolume.value, 1);
 };
+
+const shortSynopsis = computed(() => {
+    const s = props.manga.synopsis || '';
+    return s.length > 72 ? s.slice(0, 72).trimEnd() + '…' : s;
+});
 </script>
 
 <template>
-    <div 
+    <div
         ref="cardRef"
         @mousemove="handleMouseMove"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
-        :style="tiltStyle"
-        class="group bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-shadow duration-300 flex flex-col h-full relative cursor-pointer select-none"
+        :style="cardStyle"
+        class="group relative bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-md flex flex-col h-full cursor-pointer select-none transform-gpu"
+        style="transform-style: preserve-3d;"
     >
-        <!-- 3D Glare effect overlay -->
-        <div 
-            v-if="isHovered"
-            class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent pointer-events-none z-20 rounded-2xl"
+        <!-- ─── Cursor-following red glow overlay ─── -->
+        <div
+            class="absolute inset-0 pointer-events-none z-30 rounded-2xl"
+            :style="glowStyle"
         ></div>
 
-        <!-- Cover Image Container -->
+        <!-- ─── White specular glare shimmer ─── -->
+        <div
+            class="absolute inset-0 pointer-events-none z-20 rounded-2xl"
+            :style="{
+                background: `radial-gradient(ellipse 80px 60px at ${glowX}% ${glowY}%, rgba(255,255,255,0.22), transparent 80%)`,
+                opacity: isHovered ? 1 : 0,
+                transition: 'opacity 0.25s',
+            }"
+        ></div>
+
+        <!-- ─── Cover Image Container ─── -->
         <div class="relative aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer">
-            <Link :href="`/manga/${manga.id}`">
-                <img 
-                    :src="manga.cover_image" 
-                    :alt="manga.title" 
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            <!-- Parallax image: moves faster than card (foreground layer) -->
+            <Link :href="`/manga/${manga.id}`" class="block w-full h-full">
+                <img
+                    :src="manga.cover_image"
+                    :alt="manga.title"
+                    :style="imgStyle"
+                    class="w-full h-full object-cover transform-gpu will-change-transform"
                 />
             </Link>
 
-            <!-- Genre Badge -->
-            <div class="absolute top-3 left-3 bg-gray-900/85 backdrop-blur-md text-white text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-md shadow">
-                {{ manga.genre }}
-            </div>
-
-            <!-- Status Badge -->
-            <div 
-                class="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded shadow"
-                :class="manga.status === 'Terminé' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300'"
+            <!-- ─── Genre Badge — slides up + 3D rotates to face user ─── -->
+            <div
+                :style="badgeStyle"
+                class="absolute top-3 left-3 z-10 transform-gpu"
             >
-                {{ manga.status }}
+                <!-- Default genre label -->
+                <div
+                    class="bg-gray-900/90 backdrop-blur-md text-white text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-md shadow transition-all duration-300"
+                    :class="isHovered ? '-translate-y-1 opacity-0 pointer-events-none h-0 overflow-hidden' : 'opacity-100'"
+                >
+                    {{ manga.genre }}
+                </div>
+                <!-- Synopsis revealed on hover — slides in below genre -->
+                <div
+                    class="bg-primary text-white text-[9px] font-semibold leading-snug px-2.5 py-1.5 rounded-md shadow-lg shadow-primary/30 max-w-[130px] transition-all duration-400"
+                    :class="isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'"
+                >
+                    <span class="font-extrabold uppercase tracking-wider block mb-0.5">{{ manga.genre }}</span>
+                    {{ shortSynopsis }}
+                </div>
             </div>
 
-            <!-- Hover Quick Action Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4 gap-2 z-10">
-                <Link 
-                    :href="`/manga/${manga.id}`"
-                    class="flex-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs font-bold py-2 px-3 rounded-xl border border-white/30 flex items-center justify-center gap-1.5 transition"
+            <!-- ─── Status Badge — also 3D-rotates ─── -->
+            <div
+                :style="badgeStyle"
+                class="absolute top-3 right-3 z-10 transform-gpu"
+            >
+                <div
+                    class="text-[10px] font-bold px-2 py-0.5 rounded shadow transition-all duration-300"
+                    :class="[
+                        manga.status === 'Terminé'
+                            ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                            : 'bg-emerald-100 text-emerald-800 border border-emerald-300',
+                        isHovered ? 'scale-105' : 'scale-100'
+                    ]"
                 >
-                    <Eye class="w-3.5 h-3.5" />
-                    Fiche produit
-                </Link>
-                <button 
-                    v-if="firstVolume && firstVolume.stock > 0"
-                    @click="handleQuickAdd"
-                    class="bg-primary hover:bg-primary-hover text-white text-xs font-bold p-2.5 rounded-xl shadow-lg shadow-primary/40 transition hover:scale-110 active:scale-95"
-                    title="Ajouter le Tome 1"
+                    {{ manga.status }}
+                </div>
+            </div>
+
+            <!-- ─── Hover Overlay: Depth gradient + Action Buttons ─── -->
+            <div
+                class="absolute inset-0 flex flex-col justify-end p-3 gap-2 z-10 transition-opacity duration-300"
+                :class="isHovered ? 'opacity-100' : 'opacity-0'"
+                style="background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.38) 50%, transparent 100%);"
+            >
+                <!-- Floating depth action strip -->
+                <div
+                    class="flex gap-2 transition-transform duration-300"
+                    :style="{ transform: isHovered ? 'translateY(0) translateZ(24px)' : 'translateY(12px)' }"
+                    style="transform-style: preserve-3d;"
                 >
-                    <ShoppingCart class="w-4 h-4" />
-                </button>
+                    <Link
+                        :href="`/manga/${manga.id}`"
+                        class="flex-1 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white text-xs font-bold py-2 px-3 rounded-xl border border-white/30 flex items-center justify-center gap-1.5 transition shadow-xl"
+                    >
+                        <Eye class="w-3.5 h-3.5" />
+                        Voir la fiche
+                    </Link>
+                    <button
+                        v-if="firstVolume && firstVolume.stock > 0"
+                        @click="handleQuickAdd"
+                        class="bg-primary hover:bg-primary-hover text-white text-xs font-bold p-2.5 rounded-xl shadow-lg shadow-primary/50 transition hover:scale-110 active:scale-95"
+                        title="Ajouter le Tome 1 au panier"
+                    >
+                        <ShoppingCart class="w-4 h-4" />
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Details -->
-        <div class="p-4 flex flex-col flex-1 justify-between bg-white">
+        <!-- ─── Card Info Footer ─── -->
+        <div class="p-4 flex flex-col flex-1 justify-between bg-white transition-colors duration-300">
             <div>
-                <span class="text-[11px] font-semibold text-gray-400 block mb-1">Par {{ manga.author }}</span>
+                <span class="text-[10px] font-semibold text-gray-400 block mb-0.5 uppercase tracking-wider">
+                    {{ manga.author }}
+                </span>
                 <Link :href="`/manga/${manga.id}`">
-                    <h3 class="font-gang text-gray-900 text-lg group-hover:text-primary transition-colors line-clamp-1">
+                    <h3 class="font-gang text-gray-900 text-base group-hover:text-primary transition-colors duration-300 line-clamp-1 leading-tight">
                         {{ manga.title }}
                     </h3>
                 </Link>
-                <p class="text-xs text-gray-500 mt-2 line-clamp-2 leading-relaxed">
-                    {{ manga.synopsis }}
-                </p>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-1 text-xs text-gray-500 font-medium">
                     <BookOpen class="w-3.5 h-3.5 text-primary" />
-                    <span>{{ manga.volumes ? manga.volumes.length : 0 }} Tomes</span>
+                    <span>{{ manga.volumes?.length ?? 0 }} Tomes</span>
                 </div>
                 <div class="text-right">
                     <span class="text-[10px] text-gray-400 block">À partir de</span>
-                    <span class="font-bold text-gray-900 text-sm">
+                    <span
+                        class="font-bold text-sm transition-colors duration-300"
+                        :class="isHovered ? 'text-primary' : 'text-gray-900'"
+                    >
                         {{ firstVolume ? firstVolume.price.toFixed(2) : '6.90' }} €
                     </span>
                 </div>
             </div>
         </div>
+
+        <!-- ─── Red bottom border accent revealed on hover ─── -->
+        <div
+            class="absolute bottom-0 inset-x-0 h-0.5 bg-gradient-to-r from-primary via-primary-light to-primary transition-opacity duration-300 rounded-b-2xl"
+            :class="isHovered ? 'opacity-100' : 'opacity-0'"
+        ></div>
     </div>
 </template>
+
+<style scoped>
+.will-change-transform {
+    will-change: transform;
+}
+</style>
