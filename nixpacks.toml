@@ -3,6 +3,7 @@ nixPkgs = ["php83", "php83Packages.composer", "nodejs"]
 
 [phases.build]
 cmds = [
+    "mkdir -p storage/framework/views storage/framework/sessions storage/framework/cache bootstrap/cache",
     "composer install --no-dev --optimize-autoloader",
     "npm ci",
     "npm run build"
