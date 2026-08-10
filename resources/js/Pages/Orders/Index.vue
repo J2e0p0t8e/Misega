@@ -1,7 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
-import { Package, Calendar } from 'lucide-vue-next';
+import { Package, Calendar } from '@lucide/vue';
 
 const props = defineProps({
     orders: { type: Array, default: () => [] }

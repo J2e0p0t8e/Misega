@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import { useCartStore } from '@/stores/useCartStore';
-import { ShoppingBag, Trash2, ArrowRight, ArrowLeft, Truck, ShieldCheck, Sparkles } from 'lucide-vue-next';
+import { ShoppingBag, Trash2, ArrowRight, ArrowLeft, Truck, ShieldCheck, Sparkles } from '@lucide/vue';
 
 const cartStore = useCartStore();
 

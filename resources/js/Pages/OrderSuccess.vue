@@ -1,7 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
-import { CheckCircle2, Package, Home, Sparkles } from 'lucide-vue-next';
+import { CheckCircle2, Package, Home, Sparkles } from '@lucide/vue';
 
 const props = defineProps({
     order: { type: Object, required: true }

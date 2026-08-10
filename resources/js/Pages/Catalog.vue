@@ -5,7 +5,7 @@ import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import MangaCard from '@/Components/MangaCard.vue';
 import Hero3DCarousel from '@/Components/Hero3DCarousel.vue';
 import MangaSceneBackground from '@/Components/MangaSceneBackground.vue';
-import { Search, Sparkles, X, BookOpen, Layers } from 'lucide-vue-next';
+import { Search, Sparkles, X, BookOpen, Layers } from '@lucide/vue';
 
 const props = defineProps({
     mangas: { type: Array, default: () => [] },

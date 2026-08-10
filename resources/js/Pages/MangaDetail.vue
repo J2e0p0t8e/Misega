@@ -4,7 +4,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import MangaCard from '@/Components/MangaCard.vue';
 import { useCartStore } from '@/stores/useCartStore';
-import { ShoppingCart, Check, BookOpen, AlertCircle, ArrowLeft, Building2, User } from 'lucide-vue-next';
+import { ShoppingCart, Check, BookOpen, AlertCircle, ArrowLeft, Building2, User } from '@lucide/vue';
 
 const props = defineProps({
     manga: { type: Object, required: true },

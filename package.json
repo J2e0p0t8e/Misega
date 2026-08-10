@@ -20,8 +20,8 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@lucide/vue": "^1.0.0",
         "axios": "^1.19.0",
-        "lucide-vue-next": "^1.0.0",
         "pinia": "^4.0.2"
     }
 }

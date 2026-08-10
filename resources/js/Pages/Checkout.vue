@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import { useCartStore } from '@/stores/useCartStore';
-import { ShieldCheck, CreditCard, Lock, ArrowLeft, Loader2 } from 'lucide-vue-next';
+import { ShieldCheck, CreditCard, Lock, ArrowLeft, Loader2 } from '@lucide/vue';
 
 const cartStore = useCartStore();
 const page = usePage();

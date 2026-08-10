@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/useCartStore';
 import MisegaLoader from '@/Components/MisegaLoader.vue';
-import { ShoppingBag, Search, Menu, X, LogOut, Package } from 'lucide-vue-next';
+import { ShoppingBag, Search, Menu, X, LogOut, Package } from '@lucide/vue';
 
 const cartStore = useCartStore();
 const page = usePage();

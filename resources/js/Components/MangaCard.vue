@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/useCartStore';
-import { ShoppingCart, Eye, BookOpen, Star } from 'lucide-vue-next';
+import { ShoppingCart, Eye, BookOpen, Star } from '@lucide/vue';
 
 const props = defineProps({
     manga: { type: Object, required: true }

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { ChevronLeft, ChevronRight, Eye, BookOpen, Sparkles } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Eye, BookOpen, Sparkles } from '@lucide/vue';
 
 const props = defineProps({
     mangas: {
