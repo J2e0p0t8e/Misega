@@ -7,9 +7,10 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Catalog & Manga routes
-Route::get('/', [MangaController::class, 'index'])->name('home');
-Route::get('/catalog', [MangaController::class, 'index'])->name('catalog');
+// Home & Catalog routes
+Route::get('/', [MangaController::class, 'home'])->name('home');
+Route::get('/catalogue', [MangaController::class, 'catalog'])->name('catalogue');
+Route::get('/catalog', [MangaController::class, 'catalog'])->name('catalog');
 Route::get('/manga/{id}', [MangaController::class, 'show'])->name('manga.show');
 
 // Cart & Checkout routes

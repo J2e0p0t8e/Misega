@@ -30,7 +30,7 @@ export const useCartStore = defineStore('cart', {
                     volume_number: volume.volume_number,
                     price: parseFloat(volume.price),
                     stock: volume.stock,
-                    cover_image: volume.cover_image_url || manga.cover_image,
+                    cover_image: manga.cover_url || manga.cover_image || volume.cover_image_url,
                     quantity: Math.min(quantity, volume.stock),
                 });
             }

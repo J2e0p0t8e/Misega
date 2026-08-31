@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/useCartStore';
 import MisegaLoader from '@/Components/MisegaLoader.vue';
 import { ShoppingBag, Search, Menu, X, LogOut, Package } from '@lucide/vue';
@@ -14,7 +14,7 @@ const searchQuery = ref('');
 
 const handleSearch = () => {
     if (searchQuery.value.trim()) {
-        window.location.href = `/catalog?search=${encodeURIComponent(searchQuery.value.trim())}`;
+        router.get('/catalogue', { search: searchQuery.value.trim() });
     }
 };
 </script>
@@ -51,36 +51,24 @@ const handleSearch = () => {
                 </Link>
 
                 <!-- Navigation Links (Desktop) -->
-                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <nav class="hidden md:flex items-center space-x-6 text-sm font-medium ml-2">
                     <Link
-                        href="/catalog"
+                        href="/catalogue"
                         class="text-gray-500 hover:text-gray-900 transition-colors py-1 border-b-2"
-                        :class="page.url.startsWith('/catalog') ? 'border-primary text-gray-900 font-bold' : 'border-transparent'"
+                        :class="page.url.startsWith('/catalogue') || page.url.startsWith('/catalog') ? 'border-primary text-gray-900 font-bold' : 'border-transparent'"
                     >
                         Catalogue
-                    </Link>
-                    <Link
-                        href="/catalog?genre=Shonen"
-                        class="text-gray-500 hover:text-gray-900 transition-colors"
-                    >
-                        Shōnen
-                    </Link>
-                    <Link
-                        href="/catalog?genre=Seinen"
-                        class="text-gray-500 hover:text-gray-900 transition-colors"
-                    >
-                        Seinen
                     </Link>
                 </nav>
 
                 <!-- Search Bar (Desktop) -->
-                <div class="hidden lg:flex items-center relative flex-1 max-w-xs mx-4">
+                <div class="hidden lg:flex items-center relative flex-1 max-w-md mx-6">
                     <input
                         v-model="searchQuery"
                         @keyup.enter="handleSearch"
                         type="text"
                         placeholder="Rechercher un manga, auteur..."
-                        class="w-full bg-gray-100 text-sm text-gray-700 placeholder-gray-400 rounded-full py-2 pl-10 pr-4 border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition"
+                        class="w-full bg-gray-100 text-sm text-gray-700 placeholder-gray-400 rounded-full py-2 pl-10 pr-4 border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition shadow-sm"
                     />
                     <Search @click="handleSearch" class="w-4 h-4 text-gray-400 absolute left-3.5 cursor-pointer hover:text-primary transition" />
                 </div>
@@ -159,9 +147,9 @@ const handleSearch = () => {
                     />
                     <Search class="w-4 h-4 text-gray-400 absolute left-3 top-3" />
                 </div>
-                <Link href="/catalog" class="block text-sm font-semibold text-gray-700 py-1.5">Tous les Mangas</Link>
-                <Link href="/catalog?genre=Shonen" class="block text-sm font-semibold text-gray-500 py-1.5">Shōnen</Link>
-                <Link href="/catalog?genre=Seinen" class="block text-sm font-semibold text-gray-500 py-1.5">Seinen</Link>
+                <Link href="/catalogue" class="block text-sm font-semibold text-gray-700 py-1.5">Tous les Mangas</Link>
+                <Link href="/catalogue?genre=Shonen" class="block text-sm font-semibold text-gray-500 py-1.5">Shōnen</Link>
+                <Link href="/catalogue?genre=Seinen" class="block text-sm font-semibold text-gray-500 py-1.5">Seinen</Link>
                 <div v-if="user" class="pt-2 border-t border-gray-200">
                     <Link href="/orders" class="block text-sm font-semibold text-primary py-1.5">Mes Commandes</Link>
                 </div>
@@ -192,9 +180,9 @@ const handleSearch = () => {
                     <div>
                         <h4 class="font-gang text-white text-base mb-3 tracking-wide">Navigation</h4>
                         <ul class="space-y-2 text-xs">
-                            <li><Link href="/catalog" class="hover:text-primary transition">Catalogue Complet</Link></li>
-                            <li><Link href="/catalog?genre=Shonen" class="hover:text-primary transition">Shōnen Populaires</Link></li>
-                            <li><Link href="/catalog?genre=Seinen" class="hover:text-primary transition">Nouveautés Seinen</Link></li>
+                            <li><Link href="/catalogue" class="hover:text-primary transition">Catalogue Complet</Link></li>
+                            <li><Link href="/catalogue?genre=Shonen" class="hover:text-primary transition">Shōnen Populaires</Link></li>
+                            <li><Link href="/catalogue?genre=Seinen" class="hover:text-primary transition">Nouveautés Seinen</Link></li>
                         </ul>
                     </div>
 

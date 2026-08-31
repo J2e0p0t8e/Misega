@@ -11,6 +11,9 @@ const props = defineProps({
 const cartStore = useCartStore();
 const cardRef = ref(null);
 const isHovered = ref(false);
+const hasImageError = ref(false);
+
+const imageSource = computed(() => props.manga.cover_url || props.manga.cover_image || null);
 
 // --- Tracking state ---
 const rotX = ref(0);
@@ -136,9 +139,22 @@ const shortSynopsis = computed(() => {
         <div class="relative aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer">
             <!-- Parallax image: moves faster than card (foreground layer) -->
             <Link :href="`/manga/${manga.id}`" class="block w-full h-full">
+                <div 
+                    v-if="hasImageError || !imageSource" 
+                    class="w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 flex flex-col items-center justify-center p-4 text-center select-none"
+                >
+                    <div class="font-gang text-white text-base sm:text-lg font-bold line-clamp-2 leading-tight mb-2">
+                        {{ manga.title }}
+                    </div>
+                    <span class="text-[10px] font-semibold text-primary uppercase tracking-widest bg-primary/10 px-2.5 py-0.5 rounded border border-primary/20">
+                        {{ manga.genre }}
+                    </span>
+                </div>
                 <img
-                    :src="manga.cover_image"
+                    v-else
+                    :src="imageSource"
                     :alt="manga.title"
+                    @error="hasImageError = true"
                     :style="imgStyle"
                     class="w-full h-full object-cover transform-gpu will-change-transform"
                 />

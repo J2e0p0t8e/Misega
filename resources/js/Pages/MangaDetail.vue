@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import MangaCard from '@/Components/MangaCard.vue';
@@ -14,6 +14,9 @@ const props = defineProps({
 const cartStore = useCartStore();
 const quantities = ref({});
 const addedVolumeId = ref(null);
+const hasImageError = ref(false);
+
+const imageSource = computed(() => props.manga.cover_url || props.manga.cover_image || null);
 
 const getQty = (volumeId) => quantities.value[volumeId] || 1;
 const setQty = (volumeId, delta, maxStock) => {
@@ -53,7 +56,15 @@ const handleAddToCart = (volume) => {
                     <!-- Left: Main Cover Poster -->
                     <div class="lg:col-span-4 max-w-xs mx-auto lg:mx-0 w-full">
                         <div class="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-white bg-gray-100 relative">
-                            <img :src="manga.cover_image" :alt="manga.title" class="w-full h-full object-cover" />
+                            <div v-if="hasImageError || !imageSource" class="w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 flex flex-col items-center justify-center p-6 text-center select-none">
+                                <div class="font-gang text-white text-xl sm:text-2xl font-bold line-clamp-3 leading-tight mb-3">
+                                    {{ manga.title }}
+                                </div>
+                                <span class="text-xs font-semibold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1 rounded border border-primary/20">
+                                    {{ manga.genre }}
+                                </span>
+                            </div>
+                            <img v-else :src="imageSource" :alt="manga.title" @error="hasImageError = true" class="w-full h-full object-cover" />
                         </div>
                     </div>
 

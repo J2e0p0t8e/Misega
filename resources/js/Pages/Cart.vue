@@ -1,11 +1,12 @@
 <script setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import { useCartStore } from '@/stores/useCartStore';
 import { ShoppingBag, Trash2, ArrowRight, ArrowLeft, Truck, ShieldCheck, Sparkles } from '@lucide/vue';
 
 const cartStore = useCartStore();
+const cartImgErrors = ref({});
 
 const shippingCost = computed(() => {
     return cartStore.totalPrice >= 35 ? 0 : 4.90;
@@ -82,8 +83,11 @@ const amountRemainingForFreeShipping = computed(() => {
                         class="bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 shadow-sm transition hover:shadow-md"
                     >
                         <!-- Cover -->
-                        <Link :href="`/manga/${item.manga_id}`" class="w-16 sm:w-20 aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-                            <img :src="item.cover_image" :alt="item.manga_title" class="w-full h-full object-cover" />
+                        <Link :href="`/manga/${item.manga_id}`" class="w-16 sm:w-20 aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-200 block relative">
+                            <div v-if="cartImgErrors[item.volume_id] || !item.cover_image" class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-1 text-center select-none">
+                                <span class="font-gang text-white text-[10px] line-clamp-2 leading-none">{{ item.manga_title }}</span>
+                            </div>
+                            <img v-else :src="item.cover_image" :alt="item.manga_title" @error="cartImgErrors[item.volume_id] = true" class="w-full h-full object-cover" />
                         </Link>
 
                         <!-- Manga details -->

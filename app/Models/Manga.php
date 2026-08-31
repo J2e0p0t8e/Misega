@@ -18,6 +18,7 @@ class Manga extends Model
         'synopsis',
         'status',
         'cover_image',
+        'cover_url',
         'is_featured',
     ];
 

@@ -9,17 +9,36 @@ use Inertia\Response;
 
 class MangaController extends Controller
 {
-    public function index(Request $request): Response
+    /**
+     * Homepage (GET /)
+     */
+    public function home(): Response
+    {
+        $featuredMangas = Manga::with(['volumes'])->where('is_featured', true)->get();
+        $latestMangas = Manga::with(['volumes'])->orderBy('created_at', 'desc')->take(8)->get();
+        $genres = Manga::distinct()->pluck('genre')->filter()->values();
+
+        return Inertia::render('Home', [
+            'featuredMangas' => $featuredMangas,
+            'latestMangas' => $latestMangas,
+            'genres' => $genres,
+        ]);
+    }
+
+    /**
+     * Dedicated Catalog page (GET /catalogue & GET /catalog)
+     */
+    public function catalog(Request $request): Response
     {
         $query = Manga::with(['volumes']);
 
-        // Search filter
+        // Search filter (cross-database case insensitive search)
         if ($request->filled('search')) {
-            $search = $request->input('search');
+            $search = strtolower($request->input('search'));
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'ilike', "%{$search}%")
-                  ->orWhere('author', 'ilike', "%{$search}%")
-                  ->orWhere('publisher', 'ilike', "%{$search}%");
+                $q->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(author) LIKE ?', ["%{$search}%"])
+                  ->orWhereRaw('LOWER(publisher) LIKE ?', ["%{$search}%"]);
             });
         }
 
@@ -37,13 +56,10 @@ class MangaController extends Controller
         $genres = Manga::distinct()->pluck('genre')->filter()->values();
         $authors = Manga::distinct()->pluck('author')->filter()->values();
 
-        $featuredMangas = Manga::with(['volumes'])->where('is_featured', true)->get();
-
-        return Inertia::render('Catalog', [
+        return Inertia::render('Catalogue', [
             'mangas' => $mangas,
             'genres' => $genres,
             'authors' => $authors,
-            'featuredMangas' => $featuredMangas,
             'filters' => [
                 'search' => $request->input('search', ''),
                 'genre' => $request->input('genre', ''),
@@ -52,6 +68,9 @@ class MangaController extends Controller
         ]);
     }
 
+    /**
+     * Manga detail page (GET /manga/{id})
+     */
     public function show(int $id): Response
     {
         $manga = Manga::with(['volumes'])->findOrFail($id);

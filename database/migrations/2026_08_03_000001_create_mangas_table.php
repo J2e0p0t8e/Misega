@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('synopsis');
             $table->string('status')->default('En cours'); // 'En cours' or 'Terminé'
             $table->string('cover_image')->nullable();
+            $table->text('cover_url')->nullable();
             $table->boolean('is_featured')->default(false);
             $table->timestamps();
         });

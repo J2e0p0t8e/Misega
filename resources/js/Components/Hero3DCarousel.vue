@@ -10,6 +10,10 @@ const props = defineProps({
     }
 });
 
+const imageErrors = ref({});
+const getMangaCover = (manga) => manga?.cover_url || manga?.cover_image || null;
+const handleImgError = (id) => { imageErrors.value[id] = true; };
+
 // Default active index (middle item: index 1)
 const activeIndex = ref(1);
 
@@ -119,9 +123,19 @@ const handleMouseLeave = (index) => {
                 <!-- Inner Multi-Layered 3D Depth Card -->
                 <div class="relative w-full h-full transform-style-3d">
                     <!-- Cover Image Layer -->
+                    <div v-if="imageErrors[manga.id] || !getMangaCover(manga)" class="w-full h-full bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 flex flex-col items-center justify-center p-4 text-center select-none rounded-2xl">
+                        <div class="font-gang text-white text-base sm:text-lg font-bold line-clamp-2 leading-tight mb-2">
+                            {{ manga.title }}
+                        </div>
+                        <span class="text-[10px] font-semibold text-primary uppercase tracking-widest bg-primary/10 px-2.5 py-0.5 rounded border border-primary/20">
+                            {{ manga.genre }}
+                        </span>
+                    </div>
                     <img 
-                        :src="manga.cover_image" 
+                        v-else
+                        :src="getMangaCover(manga)" 
                         :alt="manga.title" 
+                        @error="handleImgError(manga.id)"
                         class="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
                     />
 

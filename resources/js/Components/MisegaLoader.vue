@@ -1,11 +1,18 @@
+<script>
+let hasAlreadyLoaded = false;
+if (typeof window !== 'undefined' && sessionStorage.getItem('misega_loader_shown')) {
+    hasAlreadyLoaded = true;
+}
+</script>
+
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 
 // ─── State ─────────────────────────────────────────────────────────────────
-const isVisible   = ref(true);
+const isVisible   = ref(!hasAlreadyLoaded);
 const isFadingOut = ref(false);
-const bookPhase   = ref(0); // 0=idle, 1=drawing, 2=done
+const bookPhase   = ref(hasAlreadyLoaded ? 2 : 0); // 0=idle, 1=drawing, 2=done
 
 // ─── Kanji scene: depth-of-field via scale + blur ──────────────────────────
 // scale > 1.5 → close → blurred heavily
@@ -45,6 +52,12 @@ let unsubStart  = null;
 let fallbackTimer = null;
 
 onMounted(() => {
+    if (hasAlreadyLoaded) return;
+    hasAlreadyLoaded = true;
+    if (typeof window !== 'undefined') {
+        sessionStorage.setItem('misega_loader_shown', 'true');
+    }
+
     // Trigger SVG draw after a brief moment
     setTimeout(() => { bookPhase.value = 1; }, 200);
     setTimeout(() => { bookPhase.value = 2; }, 1800);
