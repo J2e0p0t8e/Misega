@@ -22,92 +22,96 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Register" />
+        <Head title="Créer un compte — MISEGA" />
 
-        <form @submit.prevent="submit">
+        <!-- Page heading -->
+        <div class="mb-8">
+            <h1 class="font-gang text-2xl text-gray-900 tracking-wide mb-1">
+                Rejoignez <span class="text-primary">MISEGA</span>
+            </h1>
+            <p class="text-sm text-gray-500">Créez votre compte pour accéder à tous vos mangas.</p>
+        </div>
+
+        <form @submit.prevent="submit" class="space-y-5">
+
+            <!-- Name -->
             <div>
-                <InputLabel for="name" value="Name" />
-
+                <InputLabel for="name" value="Prénom / Pseudo" />
                 <TextInput
                     id="name"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1.5"
                     v-model="form.name"
                     required
                     autofocus
                     autocomplete="name"
+                    placeholder="Otaku San"
                 />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError class="mt-1.5" :message="form.errors.name" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
+            <!-- Email -->
+            <div>
+                <InputLabel for="email" value="Adresse e-mail" />
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="mt-1.5"
                     v-model="form.email"
                     required
                     autocomplete="username"
+                    placeholder="vous@exemple.fr"
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError class="mt-1.5" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
+            <!-- Password -->
+            <div>
+                <InputLabel for="password" value="Mot de passe" />
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1.5"
                     v-model="form.password"
                     required
                     autocomplete="new-password"
+                    placeholder="Minimum 8 caractères"
                 />
-
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError class="mt-1.5" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
+            <!-- Password confirmation -->
+            <div>
+                <InputLabel for="password_confirmation" value="Confirmer le mot de passe" />
                 <TextInput
                     id="password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1.5"
                     v-model="form.password_confirmation"
                     required
                     autocomplete="new-password"
+                    placeholder="••••••••"
                 />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
+                <InputError class="mt-1.5" :message="form.errors.password_confirmation" />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
+            <!-- Submit -->
+            <PrimaryButton
+                class="w-full mt-2"
+                :class="{ 'opacity-60': form.processing }"
+                :disabled="form.processing"
+            >
+                <span v-if="form.processing" class="mr-2 h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent inline-block"></span>
+                Créer mon compte
+            </PrimaryButton>
         </form>
+
+        <!-- Login link -->
+        <p class="mt-8 text-center text-sm text-gray-500">
+            Déjà un compte ?
+            <Link :href="route('login')" class="font-semibold text-primary hover:text-primary-hover transition-colors">
+                Se connecter
+            </Link>
+        </p>
     </GuestLayout>
 </template>
