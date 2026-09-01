@@ -9,6 +9,8 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 const form = useForm({
     name: '',
     email: '',
+    phone: '',
+    birth_date: '',
     password: '',
     password_confirmation: '',
 });
@@ -32,7 +34,7 @@ const submit = () => {
             <p class="text-sm text-gray-500">Créez votre compte pour accéder à tous vos mangas.</p>
         </div>
 
-        <form @submit.prevent="submit" class="space-y-5">
+        <form @submit.prevent="submit" class="space-y-4">
 
             <!-- Name -->
             <div>
@@ -63,6 +65,37 @@ const submit = () => {
                     placeholder="vous@exemple.fr"
                 />
                 <InputError class="mt-1.5" :message="form.errors.email" />
+            </div>
+
+            <!-- Phone (Optional) -->
+            <div>
+                <div class="flex items-center justify-between">
+                    <InputLabel for="phone" value="Numéro de téléphone" />
+                    <span class="text-[11px] text-gray-400 font-medium">Optionnel</span>
+                </div>
+                <TextInput
+                    id="phone"
+                    type="tel"
+                    class="mt-1.5"
+                    v-model="form.phone"
+                    autocomplete="tel"
+                    placeholder="06 12 34 56 78"
+                />
+                <InputError class="mt-1.5" :message="form.errors.phone" />
+            </div>
+
+            <!-- Date of Birth (Required) -->
+            <div>
+                <InputLabel for="birth_date" value="Date de naissance" />
+                <TextInput
+                    id="birth_date"
+                    type="date"
+                    class="mt-1.5"
+                    v-model="form.birth_date"
+                    required
+                    :max="new Date().toISOString().split('T')[0]"
+                />
+                <InputError class="mt-1.5" :message="form.errors.birth_date" />
             </div>
 
             <!-- Password -->

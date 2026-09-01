@@ -34,12 +34,26 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9\s\+\-\(\)\.]*$/'],
+            'birth_date' => [
+                'required',
+                'date',
+                'before_or_equal:' . now()->subYears(13)->format('Y-m-d'),
+                'after:' . now()->subYears(120)->format('Y-m-d'),
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'birth_date.required' => 'La date de naissance est obligatoire.',
+            'birth_date.date' => 'La date de naissance doit être une date valide.',
+            'birth_date.before_or_equal' => 'Vous devez avoir au moins 13 ans pour créer un compte.',
+            'phone.regex' => 'Le numéro de téléphone n\'a pas un format valide.',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'birth_date' => $request->birth_date,
             'password' => Hash::make($request->password),
         ]);
 
