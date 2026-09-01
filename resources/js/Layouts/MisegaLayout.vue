@@ -168,7 +168,7 @@ const handleSearch = () => {
                     <!-- Brand info -->
                     <div class="space-y-4">
                         <div class="flex items-center gap-2">
-                            <img src="https://i.postimg.cc/kGLxfTPz/icon-simple-rouge-blanc-transparent.jpg" alt="Misega" class="h-8 w-8 object-contain rounded-lg" />
+                            <img src="/img/misega-icon-book-only-transparent.png" alt="Misega" class="h-8 w-8 object-contain" />
                             <span class="font-gang text-2xl font-extrabold text-white">MI<span class="text-primary">SEGA</span></span>
                         </div>
                         <p class="text-xs text-gray-400 leading-relaxed">

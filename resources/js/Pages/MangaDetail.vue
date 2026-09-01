@@ -6,6 +6,7 @@ import MangaCard from '@/Components/MangaCard.vue';
 import { useCartStore } from '@/stores/useCartStore';
 import { ShoppingCart, Check, BookOpen, AlertCircle, ArrowLeft, Building2, User } from '@lucide/vue';
 import { formatPrice } from '@/utils/formatPrice';
+import { requireAuthAndVerified } from '@/utils/authGuard';
 
 const props = defineProps({
     manga: { type: Object, required: true },
@@ -29,6 +30,10 @@ const setQty = (volumeId, delta, maxStock) => {
 };
 
 const handleAddToCart = (volume) => {
+    if (!requireAuthAndVerified()) {
+        return;
+    }
+
     const qty = getQty(volume.id);
     cartStore.addItem(props.manga, volume, qty);
     

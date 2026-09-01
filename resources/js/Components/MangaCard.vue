@@ -4,6 +4,7 @@ import { Link } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/useCartStore';
 import { ShoppingCart, Eye, BookOpen, Star } from '@lucide/vue';
 import { formatPrice } from '@/utils/formatPrice';
+import { requireAuthAndVerified } from '@/utils/authGuard';
 
 const props = defineProps({
     manga: { type: Object, required: true }
@@ -101,7 +102,14 @@ const firstVolume = computed(() =>
 const handleQuickAdd = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (firstVolume.value) cartStore.addItem(props.manga, firstVolume.value, 1);
+
+    if (!requireAuthAndVerified()) {
+        return;
+    }
+
+    if (firstVolume.value) {
+        cartStore.addItem(props.manga, firstVolume.value, 1);
+    }
 };
 
 const shortSynopsis = computed(() => {
