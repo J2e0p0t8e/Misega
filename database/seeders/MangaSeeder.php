@@ -203,8 +203,8 @@ class MangaSeeder extends Seeder
                 Log::info("Jikan fetch note for '{$title}': " . $e->getMessage());
             }
 
-            // Random realistic price between 6.50€ and 9.90€
-            $price = round(rand(650, 990) / 100, 2);
+            // Random realistic price in FCFA between 4200 and 6500 FCFA (rounded to nearest 50 FCFA)
+            $price = rand(84, 130) * 50;
 
             $manga = Manga::updateOrCreate(
                 ['title' => $title],

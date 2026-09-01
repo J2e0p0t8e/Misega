@@ -4,6 +4,7 @@ import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import { useCartStore } from '@/stores/useCartStore';
 import { ShieldCheck, CreditCard, Lock, ArrowLeft, Loader2 } from '@lucide/vue';
+import { formatPrice } from '@/utils/formatPrice';
 
 const cartStore = useCartStore();
 const page = usePage();
@@ -25,7 +26,10 @@ onMounted(() => {
     }
 });
 
-const shippingCost = computed(() => cartStore.totalPrice >= 35 ? 0 : 4.90);
+const FREE_SHIPPING_THRESHOLD = 25000;
+const SHIPPING_COST = 3000;
+
+const shippingCost = computed(() => cartStore.totalPrice >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST);
 const grandTotal = computed(() => cartStore.totalPrice + shippingCost.value);
 
 const isSubmitting = ref(false);
@@ -185,26 +189,26 @@ const submitOrder = () => {
                                     <span class="text-gray-500 text-[10px]">Tome {{ item.volume_number }} (x{{ item.quantity }})</span>
                                 </div>
                             </div>
-                            <span class="font-bold text-gray-900 shrink-0">{{ (item.price * item.quantity).toFixed(2) }} €</span>
+                            <span class="font-bold text-gray-900 shrink-0">{{ formatPrice(item.price * item.quantity) }}</span>
                         </div>
                     </div>
 
                     <div class="space-y-2 text-xs text-gray-600 border-t border-gray-100 pt-4">
                         <div class="flex justify-between">
                             <span>Sous-total</span>
-                            <span class="font-bold text-gray-900">{{ cartStore.totalPrice.toFixed(2) }} €</span>
+                            <span class="font-bold text-gray-900">{{ formatPrice(cartStore.totalPrice) }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span>Livraison</span>
                             <span :class="shippingCost === 0 ? 'text-emerald-600 font-bold' : 'text-gray-900 font-bold'">
-                                {{ shippingCost === 0 ? 'Offerte' : `${shippingCost.toFixed(2)} €` }}
+                                {{ shippingCost === 0 ? 'Offerte' : formatPrice(shippingCost) }}
                             </span>
                         </div>
                     </div>
 
                     <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
                         <span class="font-bold text-gray-900">Total à payer</span>
-                        <span class="font-gang text-2xl text-primary font-extrabold">{{ grandTotal.toFixed(2) }} €</span>
+                        <span class="font-gang text-2xl text-primary font-extrabold">{{ formatPrice(grandTotal) }}</span>
                     </div>
 
                     <!-- Confirm Order Button -->

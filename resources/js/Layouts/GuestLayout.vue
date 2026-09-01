@@ -31,7 +31,7 @@ import { Link } from '@inertiajs/vue3';
 
                 <!-- Logo link back to home -->
                 <Link href="/" class="inline-flex items-center gap-3">
-                    <img src="/img/favicon.png" alt="MISEGA logo" class="w-9 h-9 rounded-lg" />
+                    <img src="https://i.postimg.cc/kGLxfTPz/icon-simple-rouge-blanc-transparent.jpg" alt="MISEGA logo" class="w-9 h-9 object-contain rounded-lg" />
                     <span class="font-gang text-2xl tracking-[0.2em] text-white">
                         MI<span class="text-primary">SEGA</span>
                     </span>

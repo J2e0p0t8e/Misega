@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import { Package, Calendar } from '@lucide/vue';
+import { formatPrice } from '@/utils/formatPrice';
 
 const props = defineProps({
     orders: { type: Array, default: () => [] }
@@ -58,7 +59,7 @@ const formatDate = (dateStr) => {
                             >
                                 {{ order.status === 'completed' ? 'Payée / En Cours' : order.status }}
                             </span>
-                            <span class="font-gang text-xl text-primary font-extrabold">{{ order.total_amount.toFixed(2) }} €</span>
+                            <span class="font-gang text-xl text-primary font-extrabold">{{ formatPrice(order.total_amount) }}</span>
                         </div>
                     </div>
 
@@ -73,7 +74,7 @@ const formatDate = (dateStr) => {
                             <div class="min-w-0">
                                 <h4 class="font-bold text-xs text-gray-900 truncate">{{ item.volume?.manga?.title }}</h4>
                                 <span class="text-[11px] text-gray-500 block">Tome {{ item.volume?.volume_number }} (x{{ item.quantity }})</span>
-                                <span class="text-[11px] text-primary font-bold">{{ item.unit_price.toFixed(2) }} €</span>
+                                <span class="text-[11px] text-primary font-bold">{{ formatPrice(item.unit_price) }}</span>
                             </div>
                         </div>
                     </div>

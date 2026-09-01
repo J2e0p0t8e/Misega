@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/useCartStore';
 import { ShoppingCart, Eye, BookOpen, Star } from '@lucide/vue';
+import { formatPrice } from '@/utils/formatPrice';
 
 const props = defineProps({
     manga: { type: Object, required: true }
@@ -255,7 +256,7 @@ const shortSynopsis = computed(() => {
                         class="font-bold text-sm transition-colors duration-300"
                         :class="isHovered ? 'text-primary' : 'text-gray-900'"
                     >
-                        {{ firstVolume ? firstVolume.price.toFixed(2) : '6.90' }} €
+                        {{ firstVolume ? formatPrice(firstVolume.price) : '4 500 FCFA' }}
                     </span>
                 </div>
             </div>

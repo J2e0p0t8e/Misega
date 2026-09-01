@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import { CheckCircle2, Package, Home, Sparkles } from '@lucide/vue';
+import { formatPrice } from '@/utils/formatPrice';
 
 const props = defineProps({
     order: { type: Object, required: true }
@@ -67,13 +68,13 @@ const props = defineProps({
                             class="flex items-center justify-between text-xs text-gray-800"
                         >
                             <span>{{ item.volume?.manga?.title }} - Tome {{ item.volume?.volume_number }} (x{{ item.quantity }})</span>
-                            <span class="font-bold text-gray-900">{{ (item.unit_price * item.quantity).toFixed(2) }} €</span>
+                            <span class="font-bold text-gray-900">{{ formatPrice(item.unit_price * item.quantity) }}</span>
                         </div>
                     </div>
 
                     <div class="border-t border-gray-200 pt-3 flex justify-between items-center text-sm font-bold text-gray-900">
                         <span>Total payé</span>
-                        <span class="text-primary text-base font-extrabold">{{ order.total_amount.toFixed(2) }} €</span>
+                        <span class="text-primary text-base font-extrabold">{{ formatPrice(order.total_amount) }}</span>
                     </div>
                 </div>
 

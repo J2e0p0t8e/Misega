@@ -5,6 +5,7 @@ import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import MangaCard from '@/Components/MangaCard.vue';
 import { useCartStore } from '@/stores/useCartStore';
 import { ShoppingCart, Check, BookOpen, AlertCircle, ArrowLeft, Building2, User } from '@lucide/vue';
+import { formatPrice } from '@/utils/formatPrice';
 
 const props = defineProps({
     manga: { type: Object, required: true },
@@ -152,7 +153,7 @@ const handleAddToCart = (volume) => {
                         <div>
                             <div class="flex items-center justify-between gap-2">
                                 <h3 class="font-gang text-xl text-gray-900">Tome {{ volume.volume_number }}</h3>
-                                <span class="font-bold text-primary text-base">{{ volume.price.toFixed(2) }} €</span>
+                                <span class="font-bold text-primary text-base">{{ formatPrice(volume.price) }}</span>
                             </div>
                             <span v-if="volume.isbn" class="text-[10px] text-gray-400 font-mono block mt-0.5">ISBN: {{ volume.isbn }}</span>
 

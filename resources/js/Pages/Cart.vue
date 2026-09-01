@@ -4,12 +4,16 @@ import { Head, Link } from '@inertiajs/vue3';
 import MisegaLayout from '@/Layouts/MisegaLayout.vue';
 import { useCartStore } from '@/stores/useCartStore';
 import { ShoppingBag, Trash2, ArrowRight, ArrowLeft, Truck, ShieldCheck, Sparkles } from '@lucide/vue';
+import { formatPrice } from '@/utils/formatPrice';
 
 const cartStore = useCartStore();
 const cartImgErrors = ref({});
 
+const FREE_SHIPPING_THRESHOLD = 25000;
+const SHIPPING_COST = 3000;
+
 const shippingCost = computed(() => {
-    return cartStore.totalPrice >= 35 ? 0 : 4.90;
+    return cartStore.totalPrice >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
 });
 
 const grandTotal = computed(() => {
@@ -17,12 +21,12 @@ const grandTotal = computed(() => {
 });
 
 const progressToFreeShipping = computed(() => {
-    if (cartStore.totalPrice >= 35) return 100;
-    return Math.min(100, Math.round((cartStore.totalPrice / 35) * 100));
+    if (cartStore.totalPrice >= FREE_SHIPPING_THRESHOLD) return 100;
+    return Math.min(100, Math.round((cartStore.totalPrice / FREE_SHIPPING_THRESHOLD) * 100));
 });
 
 const amountRemainingForFreeShipping = computed(() => {
-    return Math.max(0, 35 - cartStore.totalPrice);
+    return Math.max(0, FREE_SHIPPING_THRESHOLD - cartStore.totalPrice);
 });
 </script>
 
@@ -60,7 +64,7 @@ const amountRemainingForFreeShipping = computed(() => {
                         <div class="flex items-center justify-between text-xs font-semibold">
                             <span v-if="amountRemainingForFreeShipping > 0" class="text-gray-700 flex items-center gap-1.5">
                                 <Truck class="w-4 h-4 text-primary" />
-                                Plus que <strong class="text-primary">{{ amountRemainingForFreeShipping.toFixed(2) }} €</strong> pour la livraison OFFERTE !
+                                Plus que <strong class="text-primary">{{ formatPrice(amountRemainingForFreeShipping) }}</strong> pour la livraison OFFERTE !
                             </span>
                             <span v-else class="text-emerald-600 flex items-center gap-1.5 font-bold">
                                 <Sparkles class="w-4 h-4" />
@@ -97,7 +101,7 @@ const amountRemainingForFreeShipping = computed(() => {
                                 {{ item.manga_title }}
                             </Link>
                             <span class="text-xs font-bold text-gray-600 block mt-0.5">Tome {{ item.volume_number }}</span>
-                            <span class="text-xs text-primary font-bold mt-1 block sm:hidden">{{ item.price.toFixed(2) }} €</span>
+                            <span class="text-xs text-primary font-bold mt-1 block sm:hidden">{{ formatPrice(item.price) }}</span>
                         </div>
 
                         <!-- Qty Selector -->
@@ -123,7 +127,7 @@ const amountRemainingForFreeShipping = computed(() => {
                         <div class="hidden sm:block text-right shrink-0 min-w-[80px]">
                             <span class="text-xs text-gray-400 block">Sous-total</span>
                             <span class="font-bold text-gray-900 text-base">
-                                {{ (item.price * item.quantity).toFixed(2) }} €
+                                {{ formatPrice(item.price * item.quantity) }}
                             </span>
                         </div>
 
@@ -156,7 +160,7 @@ const amountRemainingForFreeShipping = computed(() => {
                     <div class="space-y-3 text-sm">
                         <div class="flex justify-between text-gray-600">
                             <span>Sous-total articles</span>
-                            <span class="font-bold text-gray-900">{{ cartStore.totalPrice.toFixed(2) }} €</span>
+                            <span class="font-bold text-gray-900">{{ formatPrice(cartStore.totalPrice) }}</span>
                         </div>
                         <div class="flex justify-between text-gray-600">
                             <span class="flex items-center gap-1">
@@ -164,7 +168,7 @@ const amountRemainingForFreeShipping = computed(() => {
                                 <Truck class="w-3.5 h-3.5 text-gray-400" />
                             </span>
                             <span :class="shippingCost === 0 ? 'text-emerald-600 font-bold' : 'text-gray-900 font-bold'">
-                                {{ shippingCost === 0 ? 'GRATUIT' : `${shippingCost.toFixed(2)} €` }}
+                                {{ shippingCost === 0 ? 'GRATUIT' : formatPrice(shippingCost) }}
                             </span>
                         </div>
                     </div>
@@ -173,7 +177,7 @@ const amountRemainingForFreeShipping = computed(() => {
                         <div>
                             <span class="text-xs text-gray-500 block font-semibold">Total TTC</span>
                             <span class="font-gang text-2xl font-extrabold text-primary">
-                                {{ grandTotal.toFixed(2) }} €
+                                {{ formatPrice(grandTotal) }}
                             </span>
                         </div>
                     </div>
