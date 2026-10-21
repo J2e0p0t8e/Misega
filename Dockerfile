@@ -24,4 +24,4 @@ RUN mkdir -p storage/framework/views storage/framework/sessions storage/framewor
  && chmod -R 775 storage bootstrap/cache
 EXPOSE 10000
 CMD php artisan package:discover && php artisan config:clear && php artisan migrate --force \
- && php artisan db:seed --force && php artisan serve --host 0.0.0.0 --port ${PORT:-10000}
+ && php artisan app:seed-if-empty && php artisan serve --host 0.0.0.0 --port ${PORT:-10000}
